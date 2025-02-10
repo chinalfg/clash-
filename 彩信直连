@@ -81,18 +81,18 @@ proxies:
 p: &p {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 18000, lazy: true}}
 
 proxy-providers:
-  SYN:
+  名称1:
     <<: *p
-    url: "http://127.0.0.1:3000/download/Syn?target=ClashMeta"
-    path: "./providers/SYN.yaml"
+    url: "订阅链接"
+    path: "./providers/名称1.yaml"
     override:
       skip-cert-verify: true
       dialer-proxy: 彩信直连
          
-  木瓜云:
+  名称2:
     <<: *p
-    url: "http://127.0.0.1:3000/download/%E6%9C%A8%E7%93%9C?target=Clash"
-    path: "./providers/木瓜云.yaml"
+    url: "订阅链接"
+    path: "./providers/名称2.yaml"
     override:
       skip-cert-verify: true
       dialer-proxy: 彩信直连
@@ -115,7 +115,8 @@ proxy-groups:
     interval: 300
     tolerance: 50
     use:
-      - "SYN"
+      - "名称1"
+      - "名称2"
     
       
 
@@ -126,7 +127,8 @@ proxy-groups:
     interval: 300
     tolerance: 50
     use:
-      - "SYN"
+      - "名称1"
+      - "名称2"
     
   - name: "UDP Rules"
     type: url-test
@@ -135,7 +137,8 @@ proxy-groups:
     interval: 300
     tolerance: 50
     use:
-      - "木瓜云"
+      - "名称1"
+      - "名称2"
       
   - name: "Ad blocking"
     type: select
