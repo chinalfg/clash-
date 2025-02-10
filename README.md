@@ -1,54 +1,196 @@
-<header>
+tproxy-port: 1536
+allow-lan: true
+external-controller: 127.0.0.1:9090
+external-ui: ui
+external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
 
-<!--
-  <<< Author notes: Course header >>>
-  Include a 1280×640 image, course title in sentence case, and a concise description in emphasis.
-  In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
-  Add your open source license, GitHub uses MIT license.
--->
+find-process-mode: always
+keep-alive-interval: 15
 
-# GitHub Pages
+profile:
+  store-selected: true
+  store-fake-ip: true
 
-_Create a site or blog from your GitHub repositories with GitHub Pages._
+sniffer:
+  enable: false
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
 
-</header>
+tun:
+  enable: false
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+  auto-route: true
+  auto-detect-interface: true
 
-<!--
-  <<< Author notes: Step 1 >>>
-  Choose 3-5 steps for your course.
-  The first step is always the hardest, so pick something easy!
-  Link to docs.github.com for further explanations.
-  Encourage users to open new tabs for steps!
--->
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.0/15
+  fake-ip-filter:
+    - "*"
+    - "+.lan"
+    - "+.local"
+  respect-rules: true
+  default-nameserver:
+    - "https://1.12.12.12/dns-query"
+    - "https://223.5.5.5/dns-query"
+  nameserver:
+    - "https://dns.cloudflare.com/dns-query"
+    - "https://dns.google/dns-query"
+  proxy-server-nameserver:
+    - "https://1.12.12.12/dns-query"
+    - "https://223.5.5.5/dns-query"
+  nameserver-policy:
+    "rule-set:cn_domain,private":
+      - "https://1.12.12.12/dns-query"
+      - "https://223.5.5.5/dns-query"
+      
+proxies:
+  - name: "dns-out"
+    type: dns 
+  
+  - name: "彩信直连"
+    type: http
+    server: 14.215.182.75
+    port: 443
+    headers:
+      X-T5-Auth: 683556433
+      Host: 153.3.236.22:443
+    dialer-proxy: 局域网
 
-## Step 1: Enable GitHub Pages
+  - name: "局域网"
+    type: http
+    server: 10.0.0.200
+    port: 80
 
-_Welcome to GitHub Pages and Jekyll :tada:!_
+p: &p {type: http, interval: 86400, health-check: {enable: true, url: https://www.gstatic.com/generate_204, interval: 18000, lazy: true}}
 
-The first step is to enable GitHub Pages on this [repository](https://docs.github.com/en/get-started/quickstart/github-glossary#repository). When you enable GitHub Pages on a repository, GitHub takes the content that's on the main branch and publishes a website based on its contents.
+proxy-providers:
+  SYN:
+    <<: *p
+    url: "http://127.0.0.1:3000/download/Syn?target=ClashMeta"
+    path: "./providers/SYN.yaml"
+    override:
+      skip-cert-verify: true
+      dialer-proxy: 彩信直连
+         
+  木瓜云:
+    <<: *p
+    url: "http://127.0.0.1:3000/download/%E6%9C%A8%E7%93%9C?target=Clash"
+    path: "./providers/木瓜云.yaml"
+    override:
+      skip-cert-verify: true
+      dialer-proxy: 彩信直连
+  
 
-### :keyboard: Activity: Enable GitHub Pages
 
-1. Open a new browser tab, and work on the steps in your second tab while you read the instructions in this tab.
-1. Under your repository name, click **Settings**.
-1. Click **Pages** in the **Code and automation** section.
-1. Ensure "Deploy from a branch" is selected from the **Source** drop-down menu, and then select `main` from the **Branch** drop-down menu.
-1. Click the **Save** button.
-1. Wait about _one minute_ then refresh this page (the one you're following instructions from). [GitHub Actions](https://docs.github.com/en/actions) will automatically update to the next step.
-   > Turning on GitHub Pages creates a deployment of your repository. GitHub Actions may take up to a minute to respond while waiting for the deployment. Future steps will be about 20 seconds; this step is slower.
-   > **Note**: In the **Pages** of **Settings**, the **Visit site** button will appear at the top. Click the button to see your GitHub Pages site.
+proxy-groups:
+  - name: "domestic"
+    type: select
+    filter: ^(?!.*(ipv6|游戏)).*(CN|联通|移动|电信|广西)
+    proxies:
+      - "彩信直连"
+      - "DIRECT"
+      - "PASS"
 
-<footer>
+  - name: "overseas"
+    type: select
+    filter: ^(?!.*(ipv6)).*(香港|HK|台湾|TW|新加坡|SG|日本|JP|韩国|KR|US|Hong Kong|Japan|Tai wan)
+    url: 'http://www.apple.com/library/test/success.html'
+    interval: 300
+    tolerance: 50
+    use:
+      - "SYN"
+    
+      
 
-<!--
-  <<< Author notes: Footer >>>
-  Add a link to get support, GitHub status page, code of conduct, license link.
--->
+  - name: "Telegram"
+    type: select
+    filter: ^(?!.*(ipv6)).*(香港|HK|台湾|TW|新加坡|SG|日本|JP|韩国|KR|US|Hong Kong|Japan|Tai wan)
+    url: 'http://www.apple.com/library/test/success.html'
+    interval: 300
+    tolerance: 50
+    use:
+      - "SYN"
+    
+  - name: "UDP Rules"
+    type: url-test
+    filter: ^(?!.*(ipv6)).*(CN)
+    url: 'http://www.apple.com/library/test/success.html'
+    interval: 300
+    tolerance: 50
+    use:
+      - "木瓜云"
+      
+  - name: "Ad blocking"
+    type: select
+    proxies:
+      - "REJECT-DROP"
+      - "PASS"
+  
 
----
 
-Get help: [Post in our discussion board](https://github.com/orgs/skills/discussions/categories/github-pages) &bull; [Review the GitHub status page](https://www.githubstatus.com/)
+rules:
+  - DST-PORT,53,dns-out
+  - RULE-SET,anti_ad,Ad blocking
+  - RULE-SET,private,DIRECT
+  - RULE-SET,google_domain,overseas
+  - RULE-SET,telegram_ip,Telegram
+  - DOMAIN-SUFFIX,clip.makima.online,彩信直连
+  - RULE-SET,geolocation-!cn,overseas
+  - SUB-RULE,(AND,((RULE-SET,cn_domain))),domestic
+  - SUB-RULE,(AND,((RULE-SET,cn_ip))),domestic
+  - MATCH,overseas
+  - MATCH,REJECT
+  
+sub-rules:
+  domestic:
+    - AND,((NETWORK,UDP)),UDP Rules
+    - MATCH,domestic
+    
+rule-anchor:
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: yaml}
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: yaml}
+  
+rule-providers:
+  anti_ad:
+    <<: *domain
+   # url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ads-all.yaml"
+  #  url: "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-clash.yaml"
+  
+    url: "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash.yaml"
+  private:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.yaml"
+  cn_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.yaml"
+  geolocation-!cn:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.yaml"
+  google_domain:
+    <<: *domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.yaml"
 
-&copy; 2023 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
+  cn_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.yaml"
 
-</footer>
+  telegram_ip:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.yaml"
