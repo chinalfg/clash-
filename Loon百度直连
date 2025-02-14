@@ -1,0 +1,178 @@
+[General]
+#false表示关闭，true表示开启
+# 自定义Geoip数据库的URL
+geoip-url = https://geodata.kelee.one/Country-Masaiki.mmdb
+# 自定义ASN数据库的URL
+ipasn-url = https://geodata.kelee.one/GeoLite2-ASN-P3TERX.mmdb
+# IP模式
+ip-mode = ipv4-only
+# DNS服务，system表示系统自带dns服务器
+dns-server = system,223.5.5.5,114.114.114.114,119.29.29.29
+# 是否允许wifi下共享网络
+allow-wifi-access = false
+# 网络共享MITM开关
+mitm-on-wifi-access = false
+# wifi共享开启时http服务的端口
+wifi-access-http-port = 7890
+# wifi共享开启时socks5服务的端口
+wifi-access-socks5-port = 7890
+# 代理延迟测速
+proxy-test-url = http://1.1.1.1/generate_204
+# 节点测速时的超时秒数
+test-timeout = 2
+# 一个节点连接失败几次后会进行节点切换，默认3次
+switch-node-after-failure-times = 3
+# 网络接口
+interface-mode = auto
+# 真实IP
+real-ip = *.apple.com,*apple.com
+# 策略切换时关闭连接
+disconnect-on-policy-change = false
+# 屏蔽443UDP端口
+disable-udp-ports = 443
+# 禁止STUN
+disable-stun = false
+# SNI辅助规则匹配
+sni-sniffing = true
+# 订阅资源解析器链接
+resource-parser = https://raw.githubusercontent.com/sub-store-org/Sub-Store/release/sub-store-parser.loon.min.js
+# skip-proxy和HTTP Proxy有关，如果配置了该参数，那么所配置的这些IP段、域名将不会转发到Loon，而是由系统处理
+skip-proxy = 192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,localhost,*.local,e.crashlynatics.com
+# 目前iOS设备上的流量有两种方式传递给Loon，分别是HTTP Proxy和TUN（可以简单理解为虚拟网卡），bypass-tun则和TUN有关，如果配置了该参数，那么所配置的这些IP段、域名就会不交给Loon来处理，系统直接处理
+bypass-tun = 10.0.0.0/8,100.64.0.0/10,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.0.0.0/24,192.0.2.0/24,192.88.99.0/24,192.168.0.0/16,198.51.100.0/24,203.0.113.0/24,224.0.0.0/4,255.255.255.255/32
+
+# > dns映射功能
+[Host]
+*.baidu.com = server:180.76.76.76
+*.icloud.com = server:119.29.29.29
+*.icloud.com.cn = server:119.29.29.29
+*.taobao.com = server:223.5.5.5
+*.tmall.com = server:223.5.5.5
+*.jd.com = server:119.28.28.28
+*.qq.com = server:119.28.28.28
+*.tencent.com = server:119.28.28.28
+*.alicdn.com = server:223.5.5.5
+*.aliyun.com = server:223.5.5.5
+*.weixin.com = server:119.28.28.28
+*.163.com = server:119.29.29.29
+*.126.com = server:119.29.29.29
+*.126.net = server:119.29.29.29
+*.127.net = server:119.29.29.29
+*.netease.com = server:119.29.29.29
+*.mi.com = server:119.29.29.29
+*.xiaomi.com = server:119.29.29.29
+*.bilibili.com = server:119.29.29.29
+*testflight.apple.com = server:8.8.4.4
+mtalk.google.com = 108.177.125.188
+dl.google.com = server:119.29.29.29
+dl.l.google.com = server:119.29.29.29
+
+# >手动添加的节点
+[Proxy]
+🇨🇳百度-苏州联通 = Custom,157.0.148.53,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-河北联通 = Custom,110.242.70.68,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-保定联通 = Custom,110.242.70.69,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-南京联通 = Custom,153.3.237.117,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-动态域名 = Custom,cloudnproxy.baidu.com,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-广州电信 = Custom,14.215.182.75,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-南京电信 = Custom,180.101.50.208,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+🇨🇳百度-北京电信 = Custom,220.181.33.174,443,script-path=https://raw.githubusercontent.com/unexpecteds/Other/main/Proxy/loon_bd.js
+
+# >机场订阅
+[Remote Proxy]
+机场订阅 = http://sub.store/download/%E7%A7%BB%E5%8A%A8%E2%98%81%EF%B8%8F%E6%89%8B%E6%9C%BA?target=Loon,udp=true,fast-open=false,vmess-aead=true,skip-cert-verify=default,enabled=true,flexible-sni=true
+
+# >策略组
+[Proxy Group]
+🇨🇳国内出口 = select,DIRECT,☁️国内节点,🇨🇳百度直连,url = http://connectivitycheck.gstatic.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/Skicat.png
+🌑国外出口 = select,☁️国外节点,🇨🇳链式百度,REJECT,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/Kuai.png
+🇨🇳百度直连 = select,🇨🇳百度-苏州联通,🇨🇳百度-河北联通,🇨🇳百度-保定联通,🇨🇳百度-南京联通,🇨🇳百度-动态域名,🇨🇳百度-广州电信,🇨🇳百度-南京电信,🇨🇳百度-北京电信,img-url = https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/baidunetdisk.png
+☁️国内节点 = select,DIRECT,img-url = https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/taiwan(1).png
+☁️国外节点 = select,机场订阅,url = http://www.gstatic.com/generate_204,interval = 600,img-url = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Global.png
+🍎苹果服务 = select,DIRECT,🇨🇳国内出口,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple.png
+🐟漏网之鱼 = select,🌑国外出口,🇨🇳链式百度,DIRECT,url = http://cp.cloudflare.com/generate_204,img-url = https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/Socloud.png
+
+# >筛选订阅节点
+[Remote Filter]
+# >通过关键字方式筛选
+
+# >通过正则方式筛选
+
+# >链式规则
+[Proxy Chain]
+🇨🇳链式百度 = 🇨🇳百度直连,☁️国外节点, udp=true
+
+# >本地分流规则
+[Rule]
+DOMAIN-KEYWORD,bilibili,🇨🇳国内出口
+GEOIP,CN,🇨🇳国内出口
+DOMAIN-KEYWORD,qq.com,🇨🇳国内出口
+DOMAIN,apps.apple.com,🍎苹果服务
+DOMAIN,itunes.apple.com,🍎苹果服务
+DOMAIN-KEYWORD,netflix,🌑国外出口
+DOMAIN-KEYWORD,google,🌑国外出口
+DOMAIN-KEYWORD,youtube,🌑国外出口
+#Type:DOMAIN-SUFFIX,DOMAIN,DOMAIN-KEYWORD,USER-AGENT,URL-REGEX,IP-CIDR
+#Strategy:DIRECT,PROXY,REJECT
+#Options:no-resolve(only for cidr)
+
+FINAL,🐟漏网之鱼
+
+# >分流规则 远程订阅
+[Remote Rule]
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/WeChat/WeChat.list, policy=🇨🇳国内出口, tag=微信, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/China/China.list, policy=🇨🇳国内出口, tag=China, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/China/China_Domain.list, policy=🇨🇳国内出口, tag=China_Domain, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/ChinaMax/ChinaMax.list, policy=🇨🇳国内出口, tag=ChinaMax, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/Tencent/Tencent.list, policy=🇨🇳国内出口, tag=Tencent, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/HuYa/HuYa.list, policy=🇨🇳国内出口, tag=Tencent, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/iQIYI/iQIYI.list, policy=🇨🇳国内出口, tag=iQIYI, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/iCloud/iCloud.list, policy=🍎苹果服务, tag=iCloud, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/AppStore/AppStore.list, policy=🍎苹果服务, tag=苹果商店, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/Apple/Apple.list, policy=🍎苹果服务, tag=苹果分流, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/Apple/Apple_Domain.list, policy=🍎苹果服务, tag=苹果分流, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/AppleMusic/AppleMusic.list, policy=🍎苹果服务, tag=苹果音乐, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/AppleProxy/AppleProxy.list, policy=🌑国外出口, tag=苹果代理, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Loon/GitHub/GitHub.list, policy=🌑国外出口, tag=Github, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/Global/Global.list, policy=🌑国外出口, tag=Global, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/Global/Global_Domain.list, policy=🌑国外出口, tag=Global_Domain, enabled=true
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Loon/Google/Google.list, policy=🌑国外出口, tag=Google, enabled=true
+
+# >本地URL复写
+[Rewrite]
+
+# >本地脚本
+[Script]
+
+# >远程脚本订阅
+[Remote Script]
+
+# >插件(类似Surge的模块)
+[Plugin]
+https://kelee.one/Tool/Loon/Plugin/WARP_Node_Query.plugin, enabled=true
+https://raw.githubusercontent.com/Moli-X/Resources/main/Loon/Search.plugin, enabled=true
+https://raw.githubusercontent.com/Peng-YM/Sub-Store/master/config/Loon.plugin, tag=Sub-Store订阅, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Script-Hub.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/BoxJs.plugin, policy=🌑国外出口, enabled=true
+https://raw.githubusercontent.com/sooyaaabo/Loon/main/Plugin/LoonGallery.plugin, policy=🌑国外出口, enabled=true
+https://raw.githubusercontent.com/sooyaaabo/Loon/main/Plugin/Netisp-x.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/NodeLinkCheck.Plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Weixin_external_links_unlock.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/QQ_Redirect.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Switch_github_mirror.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Google.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Weixin_Official_Accounts_remove_ads.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/DragonRead_remove_ads.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Block_HTTPDNS.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Prevent_DNS_Leaks.plugin, policy=🌑国外出口, enabled=true
+https://kelee.one/Tool/Loon/Plugin/Node_detection_tool.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/TestFlightRegionUnlock.plugin, policy=🇨🇳国内出口, enabled=true
+https://kelee.one/Tool/Loon/Plugin/QuickSearch.plugin, enabled=true
+https://kelee.one/Tool/Loon/Plugin/BlockAdvertisers.plugin, enabled=true
+
+[Mitm]
+hostname = 
+ca-p12 = 
+ca-passphrase = 
+# 跳过验证服务器的证书
+skip-server-cert-verify = true
