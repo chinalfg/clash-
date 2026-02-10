@@ -1,0 +1,74 @@
+{
+  "experimental": {
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "secret": "123456",
+      "default_mode": "Rule"
+    }
+  },
+  "dns": {
+    "rules": [
+      { "outbound": ["any"], "server": "local-dns" },
+      { "clash_mode": "Global", "server": "remote-dns" },
+      { "rule_set": ["geosite-geolocation-!cn"], "server": "remote-dns" },
+      { "rule_set": ["geosite-cn"], "server": "local-dns" }
+    ],
+    "servers": [
+      { "tag": "local-dns", "address": "223.5.5.5", "detour": "direct" },
+      { "tag": "remote-dns", "address": "https://1.1.1.1/dns-query", "detour": "国外代理组" }
+    ],
+    "final": "local-dns",
+    "strategy": "ipv4_only"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "inet4_address": "172.19.0.1/30",
+      "mtu": 1280,
+      "auto_route": true,
+      "strict_route": true,
+      "sniff": true,
+      "sniff_override_destination": true,
+      "stack": "system"
+    }
+  ],
+  "outbounds": [
+    { "type": "selector", "tag": "国外代理组", "outbounds": ["自动选择", "🇭🇰 HK-C 01", "🇸🇬 SG-C 01", "🇯🇵 JP-C 01"] },
+    { "type": "selector", "tag": "国内代理组", "outbounds": ["direct", "百度直连", "WAP"] },
+    { "type": "urltest", "tag": "自动选择", "outbounds": ["🇭🇰 HK-C 01", "🇸🇬 SG-C 01", "🇯🇵 JP-C 01"] },
+    
+    // --- 第一层：机场节点 (Detour 到百度直连实现免流嵌套) ---
+    { "tag": "🇭🇰 HK-C 01", "type": "shadowsocks", "server": "53f324d2450642dd.cdn.jiashule.com", "server_port": 40101, "method": "2022-blake3-aes-128-gcm", "password": "OGQ5NjRlOThkZDM0YjNjZQ==:MTkxZTQ3NzQtZTI2OS00MA==", "detour": "百度直连" },
+    { "tag": "🇸🇬 SG-C 01", "type": "shadowsocks", "server": "53f324d2450642dd.cdn.jiashule.com", "server_port": 40005, "method": "2022-blake3-aes-128-gcm", "password": "OGQ5NjRlOThkZDM0YjNjZQ==:MTkxZTQ3NzQtZTI2OS00MA==", "detour": "百度直连" },
+    { "tag": "🇯🇵 JP-C 01", "type": "shadowsocks", "server": "53f324d2450642dd.cdn.jiashule.com", "server_port": 46473, "method": "2022-blake3-aes-128-gcm", "password": "OGQ5NjRlOThkZDM0YjNjZQ==:MTkxZTQ3NzQtZTI2OS00MA==", "detour": "百度直连" },
+    
+    // --- 第二层：百度直连 (Detour 到底层 WAP) ---
+    { "type": "http", "tag": "百度直连", "server": "14.215.182.75", "server_port": 443, "headers": { "X-T5-Auth": "683556433", "Host": "153.3.236.22:443" }, "detour": "WAP" },
+    
+    // --- 第三层：底层 WAP ---
+    { "type": "http", "tag": "WAP", "server": "10.0.0.200", "server_port": 80 },
+    
+    { "type": "direct", "tag": "direct" },
+    { "type": "block", "tag": "block" }
+  ],
+  "route": {
+    "rules": [
+      { "protocol": "dns", "action": "hijack-dns" },
+      // 1. 全局彻底屏蔽 UDP：解决 WAP 报错，强制应用回退 TCP
+      { "protocol": "udp", "action": "reject" },
+      // 2. 修正私有网络规则 (修复 iOS 下 unknown field 报错)
+      { "geoip": ["private"], "outbound": "direct" },
+      // 3. 国外域名规则
+      { "rule_set": ["geosite-geolocation-!cn"], "outbound": "国外代理组" },
+      // 4. 国内域名及 IP 规则
+      { "rule_set": ["geosite-cn", "geoip-cn"], "outbound": "国内代理组" }
+    ],
+    "final": "国外代理组",
+    "rule_set": [
+      { "tag": "geosite-cn", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs", "download_detour": "direct" },
+      { "tag": "geoip-cn", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/srs/cn.srs", "download_detour": "direct" },
+      { "tag": "geosite-geolocation-!cn", "type": "remote", "format": "binary", "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-!cn.srs", "download_detour": "direct" }
+    ]
+  }
+}
+
